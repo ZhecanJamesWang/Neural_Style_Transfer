@@ -91,7 +91,6 @@ content_weight = args.content_weight
 width, height = load_img(base_image_path).size
 img_nrows = 400
 img_ncols = int(width * img_nrows / height)
-# ???
 
 
 # util function to open, resize and format pictures into appropriate tensors
@@ -217,8 +216,11 @@ feature_layers = ['block1_conv1', 'block2_conv1',
 #     sl = style_loss(style_reference_features, combination_features)
 #     loss += (style_weight / len(feature_layers)) * sl
 # loss += total_variation_weight * total_variation_loss(combination_image)
+
 if len(style_weight) == 1:
-    style_weight = [1.0] * len(feature_layers)
+    style_weight = [1.0/len(feature_layers)] * len(feature_layers)
+
+print "style_weight: ", style_weight 
 
 for index in range(len(feature_layers)):
     layer_name = feature_layers[index]
