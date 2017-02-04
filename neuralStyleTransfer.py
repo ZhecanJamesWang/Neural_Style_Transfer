@@ -71,7 +71,7 @@ parser.add_argument('--iter', type=int, default=10, required=False,
                     help='Number of iterations to run.')
 parser.add_argument('--content_weight', type=float, default=0.025, required=False,
                     help='Content weight.')
-parser.add_argument('--style_weight', type=float, default=1.0, required=False,
+parser.add_argument('--style_weight', type = list, default= [1.0], required=False,
                     help='Style weight.')
 parser.add_argument('--tv_weight', type=float, default=1.0, required=False,
                     help='Total Variation weight.')
@@ -91,9 +91,10 @@ content_weight = args.content_weight
 width, height = load_img(base_image_path).size
 img_nrows = 400
 img_ncols = int(width * img_nrows / height)
+# ???
+
 
 # util function to open, resize and format pictures into appropriate tensors
-
 
 def preprocess_image(image_path):
     img = load_img(image_path, target_size=(img_nrows, img_ncols))
@@ -103,7 +104,6 @@ def preprocess_image(image_path):
     return img
 
 # util function to convert a tensor into a valid image
-
 
 def deprocess_image(x):
     if K.image_dim_ordering() == 'th':
@@ -208,13 +208,28 @@ loss += content_weight * content_loss(base_image_features,
 feature_layers = ['block1_conv1', 'block2_conv1',
                   'block3_conv1', 'block4_conv1',
                   'block5_conv1']
-for layer_name in feature_layers:
+
+
+# for layer_name in feature_layers:
+#     layer_features = outputs_dict[layer_name]
+#     style_reference_features = layer_features[1, :, :, :]
+#     combination_features = layer_features[2, :, :, :]
+#     sl = style_loss(style_reference_features, combination_features)
+#     loss += (style_weight / len(feature_layers)) * sl
+# loss += total_variation_weight * total_variation_loss(combination_image)
+if len(style_weight) == 1:
+    style_weight = [1.0] * len(feature_layers)
+
+for index in range(len(feature_layers)):
+    layer_name = feature_layers[index]
     layer_features = outputs_dict[layer_name]
     style_reference_features = layer_features[1, :, :, :]
     combination_features = layer_features[2, :, :, :]
     sl = style_loss(style_reference_features, combination_features)
-    loss += (style_weight / len(feature_layers)) * sl
+    loss += style_weight[index] * sl
 loss += total_variation_weight * total_variation_loss(combination_image)
+
+
 
 # get the gradients of the generated image wrt the loss
 grads = K.gradients(loss, combination_image)

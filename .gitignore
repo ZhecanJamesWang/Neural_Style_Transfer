@@ -1,5 +1,4 @@
-*.p
 *.npy
 *.pyc
 .DS_Store
-data/
+output/
