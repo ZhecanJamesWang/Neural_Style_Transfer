@@ -220,7 +220,7 @@ feature_layers = ['block1_conv1', 'block2_conv1',
 if len(style_weight) == 1:
     style_weight = [1.0/len(feature_layers)] * len(feature_layers)
 
-print "style_weight: ", style_weight 
+print ("style_weight: ", style_weight)
 
 for index in range(len(feature_layers)):
     layer_name = feature_layers[index]
