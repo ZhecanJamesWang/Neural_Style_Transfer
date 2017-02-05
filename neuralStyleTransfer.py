@@ -71,7 +71,7 @@ parser.add_argument('--iter', type=int, default=10, required=False,
                     help='Number of iterations to run.')
 parser.add_argument('--content_weight', type=float, default=0.025, required=False,
                     help='Content weight.')
-parser.add_argument('--style_weight', type = list, default= [0.0, 0.0, 0.0, 0.5, 0.5], required=False,
+parser.add_argument('--style_weight', type = list, default= [1.0], required=False,
                     help='Style weight.')
 parser.add_argument('--tv_weight', type=float, default=1.0, required=False,
                     help='Total Variation weight.')
@@ -204,10 +204,11 @@ combination_features = layer_features[2, :, :, :]
 loss += content_weight * content_loss(base_image_features,
                                       combination_features)
 
-feature_layers = ['block1_conv1', 'block2_conv1',
-                  'block3_conv1', 'block4_conv1',
-                  'block5_conv1']
+# feature_layers = ['block1_conv1', 'block2_conv1',
+#                   'block3_conv1', 'block4_conv1',
+#                   'block5_conv1']
 
+feature_layers = ['block4_conv1', 'block5_conv1']
 
 # for layer_name in feature_layers:
 #     layer_features = outputs_dict[layer_name]
