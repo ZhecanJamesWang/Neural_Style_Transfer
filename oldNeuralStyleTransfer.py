@@ -48,7 +48,6 @@ keeping the generated image close enough to the original one.
 # References
     - [A Neural Algorithm of Artistic Style](http://arxiv.org/abs/1508.06576)
 '''
-
 from __future__ import print_function
 from keras.preprocessing.image import load_img, img_to_array
 from scipy.misc import imsave
@@ -59,6 +58,8 @@ import argparse
 
 from keras.applications import vgg16
 from keras import backend as K
+import os
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 parser = argparse.ArgumentParser(description='Neural style transfer with Keras.')
 parser.add_argument('base_image_path', metavar='base', type=str,
