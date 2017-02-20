@@ -75,6 +75,8 @@ parser.add_argument('--style_weight', type=float, default=1.0, required=False,
                     help='Style weight.')
 parser.add_argument('--tv_weight', type=float, default=1.0, required=False,
                     help='Total Variation weight.')
+parser.add_argument("--init_image", dest="init_image", default="content", type=str,
+                    help="Initial image used to generate the final image. Options are 'content', 'noise', or 'gray'")
 
 args = parser.parse_args()
 base_image_path = args.base_image_path
@@ -273,7 +275,9 @@ evaluator = Evaluator()
 
 # run scipy-based optimization (L-BFGS) over the pixels of the generated image
 # so as to minimize the neural style loss
-if K.image_dim_ordering() == 'th':
+if "content" in args.init_image or "gray" in args.init_image:
+    x = preprocess_image(base_image_path)
+elif K.image_dim_ordering() == 'th':
     x = np.random.uniform(0, 255, (1, 3, img_nrows, img_ncols)) - 128.
 else:
     x = np.random.uniform(0, 255, (1, img_nrows, img_ncols, 3)) - 128.
