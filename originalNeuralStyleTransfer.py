@@ -56,7 +56,9 @@ from scipy.optimize import fmin_l_bfgs_b
 import time
 import argparse
 
-from keras.applications import vgg16
+# from keras.applications import vgg16
+from keras.applications import vgg19
+
 from keras import backend as K
 import os
 os.environ["CUDA_VISIBLE_DEVICES"]="1"
@@ -74,7 +76,7 @@ parser.add_argument('--content_weight', type=float, default=0.025, required=Fals
                     help='Content weight.')
 parser.add_argument('--style_weight', type=float, default=1.0, required=False,
                     help='Style weight.')
-parser.add_argument('--tv_weight', type=float, default=1.0, required=False,
+parser.add_argument('--tv_weight', type=float, default=0, required=False,
                     help='Total Variation weight.')
 parser.add_argument("--init_image", dest="init_image", default="content", type=str,
                     help="Initial image used to generate the final image. Options are 'content', 'noise', or 'gray'")
@@ -140,8 +142,13 @@ input_tensor = K.concatenate([base_image,
 
 # build the VGG16 network with our 3 images as input
 # the model will be loaded with pre-trained ImageNet weights
-model = vgg16.VGG16(input_tensor=input_tensor,
-                    weights='imagenet', include_top=False)
+
+# model = vgg16.VGG16(input_tensor=input_tensor,
+#                     weights='imagenet', include_top=False)
+
+model = vgg19.VGG19(input_tensor=input_tensor,  
+                    weights='imagenet', include_top=True)
+
 print('Model loaded.')
 
 # get the symbolic outputs of each "key" layer (we gave them unique names).
@@ -202,7 +209,7 @@ def total_variation_loss(x):
 
 # combine these loss functions into a single scalar
 loss = K.variable(0.)
-layer_features = outputs_dict['block4_conv2']
+layer_features = outputs_dict['block2_conv1']
 base_image_features = layer_features[0, :, :, :]
 combination_features = layer_features[2, :, :, :]
 loss += content_weight * content_loss(base_image_features,
